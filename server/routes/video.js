@@ -5,12 +5,14 @@ const { Video } = require("../models/Video");
 const { auth } = require("../middleware/auth");
 const multer = require('multer');
 
+let ffmpeg = require('fluent-ffmpeg');
+
 let storage = multer.diskStorage({
     destination : (req, file, cb) => {
         cb(null, 'uploads/')
     },
     filename: (req, file, cb) => {
-        cb(null, `${Data.now()}_${file.originalname}`);
+        cb(null, `${Date.now()}_${file.originalname}`);
     },
     fileFilter : (req, file, cb) => {
         const ext = path.extname(file.originalname)
@@ -35,5 +37,50 @@ router.post('/uploadfiles', (req, res) => {
         return res.json({success : true, url : res.req.file.path, fileName : res.req.file.filename})
     })
 })
+router.post('/thumbnail', (req, res) => {
+    // 썸네일 생성하고 비디오 러닝타임 가져오기
+
+    let filePath = "";
+    let fileDuration = "";
+
+    ffmpeg.ffprobe(req.body.url, function(err, metadata){
+        console.dir(metadata);
+        console.log(metadata.format.duration);
+        fileDuration = metadata.format.duration
+    })
+
+    // 썸네일 생성
+    ffmpeg(req.body.url)
+    .on('filenames', function(filenames) {
+        console.log(`will generate ${filenames.join(', ')}`);
+        console.log(filenames)
+
+        filePath = `uploads/thumbnails/${filenames[0]}`
+    })
+    .on('end', function() {
+        console.log('Screenshots token');
+        return res.json({success: true, url : filePath, fileDuration : fileDuration})
+    })
+    .on('error', function(err){
+        console.error(err);
+        return res.json({success : false, err})
+    })
+    .screenshots({
+        count : 3,
+        folder : 'uploads/thumbnails',
+        size : '320x240',
+        filename : 'thumbnail-%b.png'
+    })
+})
+
+router.post('/uploadVideo', (req, res) => {
+    // 디비에 저장
+    const video = new Video(req.body)
+    video.save((err, doc) => {
+        if(err) return res.json({success : false, err})
+        res.status(200).json({success : true})
+    })
+})
+
 
 module.exports = router;
