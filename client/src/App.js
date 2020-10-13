@@ -6,9 +6,8 @@ import LandingPage from "./components/views/LandingPage/LandingPage.js";
 import LoginPage from "./components/views/LoginPage/LoginPage.js";
 import RegisterPage from "./components/views/RegisterPage/RegisterPage.js";
 import NavBar from "./components/views/NavBar/NavBar";
-import Footer from "./components/views/Footer/Footer"
-import MovieDetail from "./components/views/MovieDetail/MovieDetail";
-import FavoritePage from "./components/views/FavoritePage/FavoritePage";
+import Footer from "./components/views/Footer/Footer";
+import VideoUploadPage from './components/views/VideoUploadPage/VideoUploadPage';
 
 function App() {
   return (
@@ -20,8 +19,7 @@ function App() {
           <Route exact path="/" component={Auth(LandingPage, null)} />
           <Route exact path="/login" component={Auth(LoginPage, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
-          <Route exact path="/movie/:movieId" component={Auth(MovieDetail, null)} />
-          <Route exact path="/favorite" component={Auth(FavoritePage, true)} />
+          <Route exact path="/video/upload" component={Auth(VideoUploadPage, true)} />
         </Switch>
       </div>
       <Footer />
