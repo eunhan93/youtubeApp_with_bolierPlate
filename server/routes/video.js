@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Video } = require("../models/Video");
-
+const { Subscriber } = require("../models/Subscriber");
 const { auth } = require("../middleware/auth");
 const multer = require('multer');
 
@@ -78,9 +78,51 @@ router.post('/uploadVideo', (req, res) => {
     const video = new Video(req.body)
     video.save((err, doc) => {
         if(err) return res.json({success : false, err})
-        res.status(200).json({success : true})
+        return res.status(200).json({success : true})
     })
 })
 
+router.get('/getVideos', (req, res) => {
+    // 디비에 비디오 가져오기
+    Video.find()
+    .populate('writer') // 이걸 안 하면 id만 가져와짐
+    .exec((err, videos) => {
+        if(err) return res.status(400).send(err);
+        return res.status(200).json({success : true, videos})
+    })
+})
+
+router.post('/getVideoDetail', (req, res) => {
+    // 디비에 비디오 가져오기
+    Video.findOne({'_id' : req.body.videoId})
+    .populate('writer')
+    .exec((err, videoDetail)=>{
+        if(err) return res.status(400).send(err);
+        return res.status(200).json({success : true, videoDetail})
+    })
+})
+
+
+router.post('/getSubscriptionVideos', (req, res) => {
+    // 아이디로 구독하는 사람을 찾는다
+    console.log(req.body.userFrom);
+    Subscriber.find({userFrom : req.body.userFrom})
+    .exec((err, subscriberInfo) => {
+        if(err) return res.status(400).send(err);
+        let subscriberUser = [];
+        subscriberInfo.map((subs, index) => {
+            subscriberUser.push(subs.userTo)
+        })
+        // $in <- 몽고디비 메소드
+        Video.find({writer : { $in : subscriberUser}})
+        .populate('write')
+        .exec((err, videos) => {
+            if(err) return res.status(400).send(err);
+            return res.status(200).json({success : true, videos})
+        })
+    })
+
+    // 찾은 사람들의 비디오를 가지고 온다
+})
 
 module.exports = router;

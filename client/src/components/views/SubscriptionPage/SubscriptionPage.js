@@ -6,12 +6,17 @@ import Axios from 'axios';
 import Avatar from 'antd/lib/avatar/avatar';
 import moment from 'moment'
 
-
 const { Title } = Typography
-function LandingPage() {
+
+function SubscriptionPage() {
+
     const [Video, setVideo] = useState([])
+
     useEffect(() => {
-        Axios.get('/api/video/getVideos')
+        const subscriptionVariable = {
+            userFrom : localStorage.getItem('UserId')
+        }
+        Axios.post('/api/video/getSubscriptionVideos', subscriptionVariable)
         .then(res => {
             if(res.data.success){
                 setVideo(res.data.videos)
@@ -57,4 +62,5 @@ function LandingPage() {
     )
 }
 
-export default withRouter(LandingPage)
+
+export default withRouter(SubscriptionPage)
