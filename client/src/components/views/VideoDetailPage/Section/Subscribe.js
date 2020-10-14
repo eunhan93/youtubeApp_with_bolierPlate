@@ -7,9 +7,10 @@ function Subscribe(props) {
     const [SubscriberNumber, setSubscriberNumber] = useState(0)
     const [Subscribed, setSubscribed] = useState(false)
     useEffect(() => {
-        Axios.post('/api/subscribe/subscribeNumber', variable.userTo)
+        Axios.post('/api/subscribe/subscribeNumber', variable)
         .then(res => {
             if(res.data.success){
+                console.log(res.data.subscriberNumber);
                 setSubscriberNumber(res.data.subscriberNumber)
             } else{
                 alert('구독X')
@@ -52,21 +53,23 @@ function Subscribe(props) {
     }
     return (
         <button style={{
-                          backgroundColor : `${Subscribed ? '#aaaaaa' : '#cc0000'}`,
-                          borderRadius : '4px',
-                          color : 'white',
-                          padding : '10px 16px',
-                          fontWeight : '500',
-                          fontSize : '1rem',
-                          textTransform : 'uppercase',
-                          border : 'none'
-                      }} 
+                            backgroundColor : `${Subscribed ? '#aaaaaa' : '#cc0000'}`,
+                            borderRadius : '4px',
+                            color : 'white',
+                            padding : '10px 16px',
+                            fontWeight : '500',
+                            fontSize : '1rem',
+                            textTransform : 'uppercase',
+                            border : 'none'
+                        }} 
                 onClick={onSubscribe}
         > 
-        {SubscriberNumber} {Subscribed ? "Subscribed" : 'Subscribe'}
+        {SubscriberNumber ? SubscriberNumber : ""} {Subscribed ? "Subscribed" : 'Subscribe'}
 
         </button>
     )
+    
+    
 }
 
 export default Subscribe

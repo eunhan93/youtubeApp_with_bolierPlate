@@ -10,23 +10,24 @@ const { Title } = Typography
 
 function SubscriptionPage() {
 
-    const [Video, setVideo] = useState([])
+    const [subsVideo, setsubsVideo] = useState([])
 
     useEffect(() => {
         const subscriptionVariable = {
-            userFrom : localStorage.getItem('UserId')
+            userFrom : localStorage.getItem('userId')
         }
         Axios.post('/api/video/getSubscriptionVideos', subscriptionVariable)
         .then(res => {
             if(res.data.success){
-                setVideo(res.data.videos)
+                // console.log(res.data);
+                setsubsVideo(res.data.videos)
             } else{
                 alert('비디오 불러오기 실패')
             }
         })
     }, [])
 
-    const renderCards = Video.map((video, index) => {
+    const renderCards = subsVideo.map((video, index) => {
         let minutes = Math.floor(video.duration / 60);
         let seconds = Math.floor((video.duration - minutes * 60));
         return <Col lg={6} md={8} xs={24}>

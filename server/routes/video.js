@@ -105,7 +105,6 @@ router.post('/getVideoDetail', (req, res) => {
 
 router.post('/getSubscriptionVideos', (req, res) => {
     // 아이디로 구독하는 사람을 찾는다
-    console.log(req.body.userFrom);
     Subscriber.find({userFrom : req.body.userFrom})
     .exec((err, subscriberInfo) => {
         if(err) return res.status(400).send(err);
